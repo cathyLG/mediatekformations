@@ -15,10 +15,26 @@
                         <button type="submit" class="btn btn-info mb-2 btn-sm">filtrer</button>
                     </form>
                 </th>
+                <!-- niveau -->
+                <th class="text-left align-top" scope="col">
+                    niveau
+                    <div class="dropdown">
+                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            -Choisir un niveau-
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </div>
+                </th>
+
                 <th class="text-center align-top" scope="col">
                     <a href="{{ path('formations.sort', {champ:'publishedAt', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
                     <a href="{{ path('formations.sort', {champ:'publishedAt', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
-                 </th>
+                </th>
                 <th class="text-center align-top" scope="col">
                     &nbsp;
                 </th>
@@ -30,6 +46,11 @@
                     <td>
                         <h5 class="text-info">
                             {{ formation.title }}
+                        </h5>
+                    </td>
+                    <td>
+                        <h5 class="text-info">
+                            {{ formation.niveau.nom }}
                         </h5>
                     </td>
                     <td class="text-center">
