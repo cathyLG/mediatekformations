@@ -16,10 +16,12 @@ class FormationType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $builder
                 ->add('title', null, [
-                    'label' => 'Titre'
+                    'label' => 'Titre',
+                    'required' => true
                 ])
                 ->add('publishedAt', null, [
-                    'label' => 'Date de parution'
+                    'label' => 'Date de parution',
+                    'required' => true
                 ])
                 ->add('description')
                 ->add('miniature', null, [
@@ -29,9 +31,12 @@ class FormationType extends AbstractType {
                 ->add('videoId')
                 ->add('niveau', EntityType::class, [
                     'class' => Niveau::class,
-                    'choice_label' => 'nom'
+                    'choice_label' => 'nom',
+                    'required' => true
                 ])
-                ->add('submit', SubmitType::class)
+                ->add('submit', SubmitType::class, [
+                    'label' => 'Enregistrer'
+                ])
         ;
     }
 

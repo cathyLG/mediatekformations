@@ -168,4 +168,27 @@ class AdminFormationsController extends AbstractController {
         ]);
     }
 
+    /**
+     * @Route("/admin/formation/ajout", name="admin.formation.ajout")
+     * @param Formation $formation
+     * @param Request $request
+     * @return Response
+     */
+    public function ajout(Request $request): Response {
+        $formation = new Formation();
+        $formFormation = $this->createForm(FormationType::class, $formation);
+
+        $formFormation->handleRequest($request);
+        if ($formFormation->isSubmitted() && $formFormation->isValid()) {
+            $this->om->persist($formation);
+            $this->om->flush();
+            return $this->redirectToRoute('admin.formations');
+        }
+
+        return $this->render("admin/admin.formation.ajout.html.twig", [
+                    'formation' => $formation,
+                    'formFormation' => $formFormation->createView()
+        ]);
+    }
+
 }
