@@ -63,9 +63,6 @@ class FormationRepository extends ServiceEntityRepository {
      * @return Formation[]
      */
     public function findByEqualValue($champ, $valeur): array {
-        /*if ($champ == "niveau") {
-            $champ = "niveau_id";
-        }*/
         if ($valeur == "") {
             return $this->createQueryBuilder('f')
                             ->orderBy('f.' . $champ, 'ASC')
