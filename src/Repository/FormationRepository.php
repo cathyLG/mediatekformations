@@ -12,10 +12,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Formation[]    findAll()
  * @method Formation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class FormationRepository extends ServiceEntityRepository
-{
-    public function __construct(ManagerRegistry $registry)
-    {
+class FormationRepository extends ServiceEntityRepository {
+
+    public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Formation::class);
     }
 
@@ -25,11 +24,11 @@ class FormationRepository extends ServiceEntityRepository
      * @param type $ordre
      * @return Formation[]
      */
-    public function findAllOrderBy($champ, $ordre): array{
-            return $this->createQueryBuilder('f')
-                    ->orderBy('f.'.$champ, $ordre)
-                    ->getQuery()
-                    ->getResult();
+    public function findAllOrderBy($champ, $ordre): array {
+        return $this->createQueryBuilder('f')
+                        ->orderBy('f.' . $champ, $ordre)
+                        ->getQuery()
+                        ->getResult();
     }
 
     /**
@@ -39,33 +38,60 @@ class FormationRepository extends ServiceEntityRepository
      * @param type $valeur
      * @return Formation[]
      */
-    public function findByContainValue($champ, $valeur): array{
-        if($valeur==""){
+    public function findByContainValue($champ, $valeur): array {
+        if ($valeur == "") {
             return $this->createQueryBuilder('f')
-                    ->orderBy('f.'.$champ, 'ASC')
-                    ->getQuery()
-                    ->getResult();
-        }else{
+                            ->orderBy('f.' . $champ, 'ASC')
+                            ->getQuery()
+                            ->getResult();
+        } else {
             return $this->createQueryBuilder('f')
-                    ->where('f.'.$champ.' LIKE :valeur')
-                    ->setParameter('valeur', $valeur)
-                    ->orderBy('f.publishedAt', 'DESC')
-                    ->setParameter('valeur', '%'.$valeur.'%')
-                    ->getQuery()
-                    ->getResult();            
+                            ->where('f.' . $champ . ' LIKE :valeur')
+                            ->setParameter('valeur', $valeur)
+                            ->orderBy('f.publishedAt', 'DESC')
+                            ->setParameter('valeur', '%' . $valeur . '%')
+                            ->getQuery()
+                            ->getResult();
         }
     }
-        
+
+    /**
+     * Enregistrements dont un champ contientune valeur
+     * ou tous les enregistrements si la valeur est vide
+     * @param type $champ
+     * @param type $valeur
+     * @return Formation[]
+     */
+    public function findByEqualValue($champ, $valeur): array {
+        /*if ($champ == "niveau") {
+            $champ = "niveau_id";
+        }*/
+        if ($valeur == "") {
+            return $this->createQueryBuilder('f')
+                            ->orderBy('f.' . $champ, 'ASC')
+                            ->getQuery()
+                            ->getResult();
+        } else {
+            return $this->createQueryBuilder('f')
+                            ->where('f.' . $champ . ' = :valeur')
+                            ->setParameter('valeur', $valeur)
+                            ->orderBy('f.publishedAt', 'DESC')
+                            ->getQuery()
+                            ->getResult();
+        }
+    }
+
     /**
      * Retourne les n formations les plus récentes
      * @param type $nb
      * @return Formation[]
      */
-    public function findAllLasted($nb) : array {
+    public function findAllLasted($nb): array {
         return $this->createQueryBuilder('f')
-           ->orderBy('f.publishedAt', 'DESC')
-           ->setMaxResults($nb)     
-           ->getQuery()
-           ->getResult();
+                        ->orderBy('f.publishedAt', 'DESC')
+                        ->setMaxResults($nb)
+                        ->getQuery()
+                        ->getResult();
     }
+
 }

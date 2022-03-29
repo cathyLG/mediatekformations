@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\FormationRepository;
 use App\Repository\NiveauRepository;
+use App\Entity\Niveau;
 
 /**
  * Description of FormationsController
@@ -26,9 +27,9 @@ class FormationsController extends AbstractController {
 
     /**
      *
-     * @var NiveauRepository
+     * @var Niveau[]
      */
-    private $repositoryN;
+    private $niveaux;
 
     /**
      * 
@@ -36,7 +37,7 @@ class FormationsController extends AbstractController {
      */
     function __construct(FormationRepository $repository, NiveauRepository $repositoryN) {
         $this->repository = $repository;
-        $this->repositoryN = $repositoryN;
+        $this->niveaux = $repositoryN->findAll();
     }
 
     /**
@@ -45,10 +46,9 @@ class FormationsController extends AbstractController {
      */
     public function index(): Response {
         $formations = $this->repository->findAll();
-        $niveaux = $this->repositoryN->findAll();
         return $this->render(self::PAGEFORMATIONS, [
                     'formations' => $formations,
-                    'niveaux' => $niveaux
+                    'niveaux' => $this->niveaux
         ]);
     }
 
@@ -61,7 +61,8 @@ class FormationsController extends AbstractController {
     public function sort($champ, $ordre): Response {
         $formations = $this->repository->findAllOrderBy($champ, $ordre);
         return $this->render(self::PAGEFORMATIONS, [
-                    'formations' => $formations
+                    'formations' => $formations,
+                    'niveaux' => $this->niveaux
         ]);
     }
 
@@ -76,10 +77,25 @@ class FormationsController extends AbstractController {
             $valeur = $request->get("recherche");
             $formations = $this->repository->findByContainValue($champ, $valeur);
             return $this->render(self::PAGEFORMATIONS, [
-                        'formations' => $formations
+                        'formations' => $formations,
+                        'niveaux' => $this->niveaux
             ]);
         }
         return $this->redirectToRoute("formations");
+    }
+
+    /**
+     * @Route("/formations/recherche/{champ}/{valeur}", name="formations.findallequal")
+     * @param type $champ
+     * @param Request $request
+     * @return Response
+     */
+    public function findAllEqual($champ, $valeur): Response {
+        $formations = $this->repository->findByEqualValue($champ, $valeur);
+        return $this->render(self::PAGEFORMATIONS, [
+                    'formations' => $formations,
+                    'niveaux' => $this->niveaux
+        ]);
     }
 
     /**
@@ -90,7 +106,8 @@ class FormationsController extends AbstractController {
     public function showOne($id): Response {
         $formation = $this->repository->find($id);
         return $this->render("pages/formation.html.twig", [
-                    'formation' => $formation
+                    'formation' => $formation,
+                    'niveaux' => $this->niveaux
         ]);
     }
 

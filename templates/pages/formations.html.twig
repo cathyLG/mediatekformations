@@ -25,7 +25,7 @@
 
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                             {% for niveau in niveaux %}
-                            <a class="dropdown-item" href="#">{{ niveau.nom }}</a>
+                                <a class="dropdown-item" href="{{ path('formations.findallequal', {champ:'niveau', valeur:niveau.id})}}">{{ niveau.nom }}</a>
                             {% endfor %}
                         </div>
                     </div>
