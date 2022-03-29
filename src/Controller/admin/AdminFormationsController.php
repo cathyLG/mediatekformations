@@ -33,7 +33,7 @@ class AdminFormationsController extends AbstractController {
      */
     public function __construct(FormationRepository $repository, NiveauRepository $repositoryN) {
         $this->repository = $repository;
-        $this->niveaux=$repositoryN->findAll();
+        $this->niveaux = $repositoryN->findAll();
     }
 
     /**
@@ -41,6 +41,19 @@ class AdminFormationsController extends AbstractController {
      * @return Response
      */
     public function index(): Response {
+        $formations = $this->repository->findAll();
+        return $this->render("admin/admin.formations.html.twig", [
+                    'formations' => $formations,
+                    'niveaux' => $this->niveaux
+        ]);
+    }
+
+    /**
+     * à modifier 
+     * @Route("/admin/niveaux", name="admin.niveaux")
+     * @return Response
+     */
+    public function gestionNiveaux(): Response {
         $formations = $this->repository->findAll();
         return $this->render("admin/admin.formations.html.twig", [
                     'formations' => $formations,
