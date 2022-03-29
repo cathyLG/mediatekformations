@@ -63,10 +63,11 @@
                             </a>
                         {% endif %}
                     </td>
-                    <!-- bouton de modification et bouton de suppression -->
+                    <!-- bouton de modification  -->
                     <td>
                         <a href="{{ path('admin.formation.edit', {id:formation.id}) }}" class="btn btn-secondary">Editer</a>
                     </td>
+                    <!-- et bouton de suppression -->
                     <td>
                         <a href="{{ path('admin.formation.suppr', {id:formation.id}) }}" class="btn btn-danger" onclick="return confirm('Etes-vous sûr de vouloir supprimer {{ formation.title }} ?')">Supprimer</a>
                     </td>

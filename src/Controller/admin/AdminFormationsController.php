@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Niveau;
 use App\Repository\NiveauRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\FormationType;
 
 /**
  * Description of AdminFormationsController
@@ -148,7 +149,7 @@ class AdminFormationsController extends AbstractController {
 
     /**
      * @Route("/admin/edit/{id}", name="admin.formation.edit")
-     * @param Visite $$formation
+     * @param Formation $formation
      * @param Request $request
      * @return Response
      */
