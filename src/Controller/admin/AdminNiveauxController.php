@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Form\NiveauType;
 
 class AdminNiveauxController extends AbstractController {
 
@@ -34,10 +35,20 @@ class AdminNiveauxController extends AbstractController {
      * @Route("/admin/niveaux", name="admin.niveaux")
      * @return Response
      */
-    public function index(): Response {
+    public function index(Request $request): Response {
         $niveaux = $this->repository->findAll();
+        $niveau = new Niveau();
+        $formNiveau = $this->createForm(NiveauType::class, $niveau);
+        // en cas d'enregistrement d'un nouveau niveau
+        $formNiveau->handleRequest($request);
+        if ($formNiveau->isSubmitted() && $formNiveau->isValid()) {
+            $this->om->persist($niveau);
+            $this->om->flush();
+            return $this->redirectToRoute('admin.niveaux');
+        }
         return $this->render(self::PAGENIVEAUX, [
-                    'niveaux' => $niveaux
+                    'niveaux' => $niveaux,
+                    'formNiveau' => $formNiveau->createView()
         ]);
     }
 
