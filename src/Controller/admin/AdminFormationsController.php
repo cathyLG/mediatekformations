@@ -184,7 +184,6 @@ class AdminFormationsController extends AbstractController {
             $this->om->flush();
             return $this->redirectToRoute('admin.formations');
         }
-
         return $this->render("admin/admin.formation.ajout.html.twig", [
                     'formation' => $formation,
                     'formFormation' => $formFormation->createView()

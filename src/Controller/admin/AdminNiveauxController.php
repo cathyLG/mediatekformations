@@ -2,14 +2,16 @@
 
 namespace App\Controller\admin;
 
+use App\Entity\Formation;
 use App\Entity\Niveau;
+use App\Form\NiveauType;
+use App\Repository\FormationRepository;
 use App\Repository\NiveauRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Form\NiveauType;
 
 class AdminNiveauxController extends AbstractController {
 
@@ -22,13 +24,20 @@ class AdminNiveauxController extends AbstractController {
     private $repository;
 
     /**
+     *
+     * @var FormationRepository
+     */
+    private $repositoryF;
+
+    /**
      * constructeur
      * @param NiveauRepository $repository
      * @param \App\Controller\admin\EntityManagerInterface $om
      */
-    public function __construct(NiveauRepository $repository, EntityManagerInterface $om) {
+    public function __construct(NiveauRepository $repository, EntityManagerInterface $om, FormationRepository $repositoryF) {
         $this->repository = $repository;
         $this->om = $om;
+        $this->repositoryF = $repositoryF;
     }
 
     /**
@@ -58,8 +67,23 @@ class AdminNiveauxController extends AbstractController {
      * @return Response
      */
     public function suppr(Niveau $niveau): Response {
-        $this->om->remove($niveau);
-        $this->om->flush();
+        // vérifier si le niveau est déjà utilisé par une formation
+        $formations = $this->repositoryF->findAll();
+        $found = false;
+        foreach ($formations as $formation) {
+            if ($formation->getNiveau() == $niveau) {
+                $found = true;
+                break;
+            }
+        }
+        if ($found) {
+            $message = 'Suppression impossible : le niveau "' . $niveau->getNom() . '" est déjà utilisé par une formation';
+            $this->addFlash('alert',$message);
+        } else {
+            // suppression
+            $this->om->remove($niveau);
+            $this->om->flush();
+        }
         return $this->redirectToRoute('admin.niveaux');
     }
 
