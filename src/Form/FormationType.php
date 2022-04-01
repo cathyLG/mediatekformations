@@ -21,6 +21,7 @@ class FormationType extends AbstractType {
                 ])
                 ->add('publishedAt', null, [
                     'label' => 'Date de parution',
+                    'widget' => 'single_text',
                     'required' => true
                 ])
                 ->add('description')
