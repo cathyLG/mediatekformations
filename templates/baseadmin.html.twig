@@ -8,6 +8,7 @@
         <div class="text-left">
             <img src="{{ app.request.getBasePath()~'/banniere.jpg' }}" >
         </div>
+
         <!-- menu -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -21,6 +22,12 @@
                 </ul>
             </div>
         </nav>
+    </div>
+    <!-- bouton de déconnexion pour admin -->
+    <div class="container text-right">
+        {% if app.user %}
+            <a href="{{ path('app_logout') }}" class="btn btn-outline-dark"> Déconnectez-vous </a>
+        {% endif %}
     </div>
 {% endblock %}
 {% block body %}{% endblock %}

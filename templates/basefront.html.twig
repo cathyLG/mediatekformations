@@ -22,6 +22,12 @@
             </div>
         </nav>        
     </div>
+    <!-- bouton de déconnexion pour admin -->
+    <div class="container text-right">
+        {% if app.user %}
+            <a href="{{ path('app_logout') }}" class="btn btn-outline-dark"> Déconnectez-vous </a>
+        {% endif %}
+    </div>
 {% endblock %}
 {% block body %}{% endblock %}
 {% block javascripts %}{% endblock %}
