@@ -23,33 +23,33 @@ class AdminFormationsController extends AbstractController {
     /**
      * page à afficher
      */
-    private const PAGEFORMATIONS = "admin/admin.formations.html.twig";
+    private const PAGEADMINFORMATIONS = "admin/admin.formations.html.twig";
 
     /**
      *
      * @var FormationRepository
      */
-    private $repository;
+    private $repositoryF;
 
     /**
-     * @var Niveau[]
+     * @var NiveauRepository
      */
-    private $niveaux;
+    private $repositoryN;
 
     /**
      *
      * @var EntityManagerInterface
      */
-    private $om;
+    private $em;
 
     /**
      * 
-     * @param FormationRepository $repository
+     * @param FormationRepository $repositoryF
      */
-    public function __construct(FormationRepository $repository, NiveauRepository $repositoryN, EntityManagerInterface $om) {
-        $this->repository = $repository;
-        $this->niveaux = $repositoryN->findAll();
-        $this->om = $om;
+    public function __construct(FormationRepository $repositoryF, NiveauRepository $repositoryN, EntityManagerInterface $em) {
+        $this->repositoryF = $repositoryF;
+        $this->repositoryN = $repositoryN;
+        $this->em = $em;
     }
 
     /**
@@ -57,10 +57,11 @@ class AdminFormationsController extends AbstractController {
      * @return Response
      */
     public function index(): Response {
-        $formations = $this->repository->findAll();
-        return $this->render(self::PAGEFORMATIONS, [
+        $formations = $this->repositoryF->findAll();
+        $niveaux = $this->repositoryN->findAll();
+        return $this->render(self::PAGEADMINFORMATIONS, [
                     'formations' => $formations,
-                    'niveaux' => $this->niveaux
+                    'niveaux' => $niveaux
         ]);
     }
 
@@ -71,10 +72,11 @@ class AdminFormationsController extends AbstractController {
      * @return Response
      */
     public function sort($champ, $ordre): Response {
-        $formations = $this->repository->findAllOrderBy($champ, $ordre);
-        return $this->render(self::PAGEFORMATIONS, [
+        $formations = $this->repositoryF->findAllOrderBy($champ, $ordre);
+        $niveaux = $this->repositoryN->findAll();
+        return $this->render(self::PAGEADMINFORMATIONS, [
                     'formations' => $formations,
-                    'niveaux' => $this->niveaux
+                    'niveaux' => $niveaux
         ]);
     }
 
@@ -87,10 +89,11 @@ class AdminFormationsController extends AbstractController {
     public function findAllContain($champ, Request $request): Response {
         if ($this->isCsrfTokenValid('filtre_' . $champ, $request->get('_token'))) {
             $valeur = $request->get("recherche");
-            $formations = $this->repository->findByContainValue($champ, $valeur);
-            return $this->render(self::PAGEFORMATIONS, [
+            $formations = $this->repositoryF->findByContainValue($champ, $valeur);
+            $niveaux = $this->repositoryN->findAll();
+            return $this->render(self::PAGEADMINFORMATIONS, [
                         'formations' => $formations,
-                        'niveaux' => $this->niveaux
+                        'niveaux' => $niveaux
             ]);
         }
         return $this->redirectToRoute("admin.formations");
@@ -102,23 +105,11 @@ class AdminFormationsController extends AbstractController {
      * @return Response
      */
     public function showOne($id): Response {
-        $formation = $this->repository->find($id);
+        $formation = $this->repositoryF->find($id);
+        $niveaux = $this->repositoryN->findAll();
         return $this->render("pages/formation.html.twig", [
                     'formation' => $formation,
-                    'niveaux' => $this->niveaux
-        ]);
-    }
-
-    /**
-     * à modifier 
-     * @Route("/admin/niveaux", name="admin.niveaux")
-     * @return Response
-     */
-    public function gestionNiveaux(): Response {
-        $formations = $this->repository->findAll();
-        return $this->render(self::PAGEFORMATIONS, [
-                    'formations' => $formations,
-                    'niveaux' => $this->niveaux
+                    'niveaux' => $niveaux
         ]);
     }
 
@@ -129,10 +120,11 @@ class AdminFormationsController extends AbstractController {
      * @return Response
      */
     public function findAllEqual($champ, $valeur): Response {
-        $formations = $this->repository->findByEqualValue($champ, $valeur);
-        return $this->render(self::PAGEFORMATIONS, [
+        $formations = $this->repositoryF->findByEqualValue($champ, $valeur);
+        $niveaux = $this->repositoryN->findAll();
+        return $this->render(self::PAGEADMINFORMATIONS, [
                     'formations' => $formations,
-                    'niveaux' => $this->niveaux
+                    'niveaux' => $niveaux
         ]);
     }
 
@@ -142,8 +134,8 @@ class AdminFormationsController extends AbstractController {
      * @return Response
      */
     public function suppr(Formation $formation): Response {
-        $this->om->remove($formation);
-        $this->om->flush();
+        $this->em->remove($formation);
+        $this->em->flush();
         return $this->redirectToRoute('admin.formations');
     }
 
@@ -158,7 +150,7 @@ class AdminFormationsController extends AbstractController {
 
         $formFormation->handleRequest($request);
         if ($formFormation->isSubmitted() && $formFormation->isValid()) {
-            $this->om->flush();
+            $this->em->flush();
             return $this->redirectToRoute('admin.formations');
         }
 
@@ -180,8 +172,8 @@ class AdminFormationsController extends AbstractController {
 
         $formFormation->handleRequest($request);
         if ($formFormation->isSubmitted() && $formFormation->isValid()) {
-            $this->om->persist($formation);
-            $this->om->flush();
+            $this->em->persist($formation);
+            $this->em->flush();
             return $this->redirectToRoute('admin.formations');
         }
         return $this->render("admin/admin.formation.ajout.html.twig", [

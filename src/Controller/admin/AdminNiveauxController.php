@@ -13,15 +13,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * contrôleur admin pour les niveaux
+ */
 class AdminNiveauxController extends AbstractController {
 
-    private const PAGENIVEAUX = "admin/admin.niveaux.html.twig";
+    private const PAGEADMINNIVEAUX = "admin/admin.niveaux.html.twig";
 
     /**
      *
      * @var NiveauRepository
      */
-    private $repository;
+    private $repositoryN;
 
     /**
      *
@@ -30,13 +33,20 @@ class AdminNiveauxController extends AbstractController {
     private $repositoryF;
 
     /**
-     * constructeur
-     * @param NiveauRepository $repository
-     * @param \App\Controller\admin\EntityManagerInterface $om
+     *
+     * @var EntityManagerInterface
      */
-    public function __construct(NiveauRepository $repository, EntityManagerInterface $om, FormationRepository $repositoryF) {
-        $this->repository = $repository;
-        $this->om = $om;
+    private $em;
+
+    /**
+     * constructeur
+     * @param NiveauRepository $repositoryN
+     * @param EntityManagerInterface $em
+     * @param FormationRepository $repositoryF
+     */
+    public function __construct(NiveauRepository $repositoryN, EntityManagerInterface $em, FormationRepository $repositoryF) {
+        $this->repositoryN = $repositoryN;
+        $this->em = $em;
         $this->repositoryF = $repositoryF;
     }
 
@@ -45,17 +55,17 @@ class AdminNiveauxController extends AbstractController {
      * @return Response
      */
     public function index(Request $request): Response {
-        $niveaux = $this->repository->findAll();
+        $niveaux = $this->repositoryN->findAll();
         $niveau = new Niveau();
         $formNiveau = $this->createForm(NiveauType::class, $niveau);
         // en cas d'enregistrement d'un nouveau niveau
         $formNiveau->handleRequest($request);
         if ($formNiveau->isSubmitted() && $formNiveau->isValid()) {
-            $this->om->persist($niveau);
-            $this->om->flush();
+            $this->em->persist($niveau);
+            $this->em->flush();
             return $this->redirectToRoute('admin.niveaux');
         }
-        return $this->render(self::PAGENIVEAUX, [
+        return $this->render(self::PAGEADMINNIVEAUX, [
                     'niveaux' => $niveaux,
                     'formNiveau' => $formNiveau->createView()
         ]);
@@ -78,11 +88,11 @@ class AdminNiveauxController extends AbstractController {
         }
         if ($found) {
             $message = 'Suppression impossible : le niveau "' . $niveau->getNom() . '" est déjà utilisé par une formation';
-            $this->addFlash('alert',$message);
+            $this->addFlash('alert', $message);
         } else {
             // suppression
-            $this->om->remove($niveau);
-            $this->om->flush();
+            $this->em->remove($niveau);
+            $this->em->flush();
         }
         return $this->redirectToRoute('admin.niveaux');
     }
